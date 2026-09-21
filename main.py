@@ -7,6 +7,7 @@ from pathlib import Path
 from random import randint as randint
 from typing import Literal
 from modules.getch import input5
+from enum import Enum
 
 # Consts
 
@@ -23,6 +24,12 @@ MAX_TRIES = 6
 type b64str = str
 type checkint = Literal[0, 1, 2]
 type checktuple = tuple[checkint, checkint, checkint, checkint, checkint]
+
+class PlayState(Enum):
+    INIT = 0
+    WIN = 1
+    LOSE = 2
+    EXIT = 3
 
 # Functions
 
@@ -72,7 +79,7 @@ def randsln() -> str:
 
 # Main
 
-def play() -> str|None:
+def play() -> tuple[str, PlayState]:
     SOLUTION = randsln()
 
     for i in range(MAX_TRIES):
@@ -80,7 +87,11 @@ def play() -> str|None:
 
         while True:
             print(f"\n\x1b[1F\x1b[30m{i + 1}/{MAX_TRIES}\x1b[39m", end="", flush=True)
-            word = input5(word, indent=4)
+            try:
+                word = input5(word, indent=4)
+            except KeyboardInterrupt:
+                print("\n\x1b[0K", end="", flush=True)
+                return SOLUTION, "exit"
 
             if not isvalid(word):
                 print("\x1b[31m[!] INVALID\x1b[39m\x1b[1F", end="", flush=True)
@@ -100,25 +111,34 @@ def play() -> str|None:
             ))
         )
         if word == SOLUTION:
-            return None
+            return SOLUTION, "win"
     
-    return SOLUTION
+    return SOLUTION, "lose"
 
-if __name__ == "__main__":
+def main():
+    state = "init"
+    i = 0
 
-    while True:
-        sln = None
+    # Loop until player presses Ctrl + C
+    print()
+    while state != "exit":
+        i += 1
+        print(f"\n\x1b[30m====[[ ROUND_{i:03} ]]====\x1b[39m\n")
+        sln, state = play()
+
+        if state == "win":
+            continue
+
+        # Player either exited or lost
         i = 0
-    
-        while sln is None:
-            i += 1
-            print(f"\n\x1b[30m====[[ ROUND_{i:03} ]]====\x1b[39m\n")
-            sln = play()
-    
         print(
             "\n\x1b[30m====[[ GAME_OVER ]]====",
             "\x1b[31m",
             f"    {''.join([f'[{ch.upper()}]' for ch in sln])}    ",
             "\x1b[39m",
-            sep="\n"
+            sep="\n",
+            end="\n\n" if state == "exit" else "\n"
         )
+
+if __name__ == "__main__":
+    main()
