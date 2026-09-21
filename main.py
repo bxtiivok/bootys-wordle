@@ -91,7 +91,7 @@ def play() -> tuple[str, PlayState]:
                 word = input5(word, indent=4)
             except KeyboardInterrupt:
                 print("\n\x1b[0K", end="", flush=True)
-                return SOLUTION, "exit"
+                return SOLUTION, PlayState.EXIT
 
             if not isvalid(word):
                 print("\x1b[31m[!] INVALID\x1b[39m\x1b[1F", end="", flush=True)
@@ -111,22 +111,22 @@ def play() -> tuple[str, PlayState]:
             ))
         )
         if word == SOLUTION:
-            return SOLUTION, "win"
+            return SOLUTION, PlayState.WIN
     
-    return SOLUTION, "lose"
+    return SOLUTION, PlayState.LOSE
 
 def main():
-    state = "init"
+    state = PlayState.INIT
     i = 0
+    print()
 
     # Loop until player presses Ctrl + C
-    print()
-    while state != "exit":
+    while state is not PlayState.EXIT:
         i += 1
         print(f"\n\x1b[30m====[[ ROUND_{i:03} ]]====\x1b[39m\n")
         sln, state = play()
 
-        if state == "win":
+        if state is PlayState.WIN:
             continue
 
         # Player either exited or lost
@@ -137,7 +137,7 @@ def main():
             f"    {''.join([f'[{ch.upper()}]' for ch in sln])}    ",
             "\x1b[39m",
             sep="\n",
-            end="\n\n" if state == "exit" else "\n"
+            end="\n\n" if state is PlayState.EXIT else "\n"
         )
 
 if __name__ == "__main__":
