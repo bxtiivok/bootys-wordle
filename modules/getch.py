@@ -57,7 +57,7 @@ match getos():
             LEFT = "\x1b[D"
             RIGHT = "\x1b[C"
             ENTER = "\n"
-            BACKSPACE = "\b"
+            BACKSPACE = "\x7f"
             _CTRL_C = None
 
     case _:
@@ -80,7 +80,7 @@ def input5(val: str = "", *, indent: int = 0) -> str:
     )
 
     while True:
-        char = getch().lower()
+        char = getch()
     
         match char:
             case Key.ENTER:
@@ -119,4 +119,4 @@ def input5(val: str = "", *, indent: int = 0) -> str:
                     flush=True
                 )
 
-    return result
+    return result.lower()

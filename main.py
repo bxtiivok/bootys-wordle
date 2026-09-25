@@ -7,7 +7,6 @@ from pathlib import Path
 from random import randint as randint
 from typing import Literal
 from modules.getch import input5
-from enum import Enum
 
 # Consts
 
@@ -25,7 +24,7 @@ type b64str = str
 type checkint = Literal[0, 1, 2]
 type checktuple = tuple[checkint, checkint, checkint, checkint, checkint]
 
-class PlayState(Enum):
+class PlayState:
     INIT = 0
     WIN = 1
     LOSE = 2
